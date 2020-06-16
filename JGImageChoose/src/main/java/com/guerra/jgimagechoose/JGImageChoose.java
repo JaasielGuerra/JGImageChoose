@@ -6,10 +6,12 @@ package com.guerra.jgimagechoose;
 import com.guerra.jgimagechoose.view.View;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -27,6 +29,9 @@ public class JGImageChoose extends View {
     private String imagePath;
     private ImageIcon imageIcon;
     private byte[] imageByte;
+
+    //imagen auxiliar para setear por defecto con el boton eliminar
+    private Icon imageAux;
 
     public JGImageChoose() {
         init();
@@ -47,9 +52,37 @@ public class JGImageChoose extends View {
 
         //escucha de eventos al boton
         this.btnSeleccionar.addActionListener(event -> seleccionarImagen());
+        this.btnEliminar.addActionListener(event -> eliminarImagen());
 
+        //evento jlabel
+//        this.lblImage.addComponentListener(new ComponentAdapter() {
+//
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                redimencionarImagen();
+//            }
+//
+//        });
     }
 
+    //convertir icono a imagen
+//    private static Image iconToImage(Icon icon) {
+//        if (icon instanceof ImageIcon) {
+//            return ((ImageIcon) icon).getImage();
+//        } else {
+//            int w = icon.getIconWidth();
+//            int h = icon.getIconHeight();
+//            GraphicsEnvironment ge
+//                    = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//            GraphicsDevice gd = ge.getDefaultScreenDevice();
+//            GraphicsConfiguration gc = gd.getDefaultConfiguration();
+//            BufferedImage image = gc.createCompatibleImage(w, h);
+//            Graphics2D g = image.createGraphics();
+//            icon.paintIcon(null, g, 0, 0);
+//            g.dispose();
+//            return image;
+//        }
+//    }
     //obtener la extension del archivo
     private String getExtension(File file) {
 
@@ -66,11 +99,28 @@ public class JGImageChoose extends View {
 
     /////////////metodos getter y setter//////////////////
     /**
+     * Devuelve la extension del archivo seleccionado.
+     * <p>
+     * Si el usuario no ha seleccionado nada, devolvera null.
+     *
+     * @return String de la extension.
+     * <p>
+     * Null en caso de no existir.
+     */
+    public String getExtensionFile() {
+        if (fileChooser.getSelectedFile() != null) {
+            return getExtension(fileChooser.getSelectedFile());
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Asigna un texto al boton.
      *
      * @param text El texto a asignar
      */
-    public void setTextButton(String text) {
+    public void setTextButtonSelect(String text) {
         this.btnSeleccionar.setText(text);
     }
 
@@ -79,12 +129,30 @@ public class JGImageChoose extends View {
      *
      * @return String del texto.
      */
-    public String getTextButton() {
+    public String getTextButtonSelect() {
         return this.btnSeleccionar.getText();
     }
 
     /**
-     * Devuelve la ruta de la imagen selecciona por el usuario.
+     * Asigna un icono al boton.
+     *
+     * @param icon El icono a asignar
+     */
+    public void setIconButtonSelect(ImageIcon icon) {
+        this.btnSeleccionar.setIcon(icon);
+    }
+
+    /**
+     * Asigna un icono al boton.
+     *
+     * @param icon El icono a asignar
+     */
+    public void setIconButtonDelete(ImageIcon icon) {
+        this.btnEliminar.setIcon(icon);
+    }
+
+    /**
+     * Devuelve la ruta de la imagen seleccionada por el usuario.
      * <p>
      * En caso de no haber seleccionado una imagen, entonces devolvera la ruta
      * de la imagen que se haya asignado con el metodo
@@ -115,51 +183,149 @@ public class JGImageChoose extends View {
             BufferedImage img = ImageIO.read(new File(imagePath));
 
             //setear la imagen en la vista, escalandola al tamanio del label
-            lblImage.setIcon(new ImageIcon(img.getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_DEFAULT)));
+            this.lblImage.setIcon(new ImageIcon(img.getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_DEFAULT)));
+            this.imageAux = lblImage.getIcon();//salvar imagen auxiliar
 
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error al cargar la imagen.\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Devuelve la imagen seleccionada por el usuario.
+     * <p>
+     * En caso de no haber seleccionado una imagen, entonces devolvera la imagen
+     * que se haya asignado con el metodo <code>setImageIcon</code>.
+     *
+     * Si no se asigno o selecciono ninguna imagen, entonces devolvera null.
+     *
+     * @return imageIcon (imagen asignada o seleccionada).
+     * <p>
+     * Null en caso de no existir.
+     */
+    public ImageIcon getImageIcon() {
+        return imageIcon;
+    }
+
+    /**
+     * Asignar una imagen al componente.
+     *
+     * @param imageIcon La imagen a setear.
+     */
+    public void setImageIcon(ImageIcon imageIcon) {
+        this.imageIcon = imageIcon;
+
+        this.lblImage.setIcon(imageIcon);
+        this.imageAux = lblImage.getIcon();//salvar imagen auxiliar
+    }
+
+    /**
+     * Devuelve los bytes de la imagen seleccionada por el usuario.
+     * <p>
+     * En caso de no haber seleccionado una imagen, entonces devolvera los bytes
+     * de la imagen que se hayan asignado con el metodo
+     * <code>setImageByte</code>.
+     *
+     * Si no se asigno o selecciono ninguna imagen, entonces devolvera null.
+     *
+     * @return byte[] (imagen asignada o seleccionada).
+     * <p>
+     * Null en caso de no existir.
+     */
+    public byte[] getImageByte() {
+        return imageByte;
+    }
+
+    /**
+     * Asignar una imagen en bytes.
+     *
+     * @param imageByte Los bytes de la imagen.
+     */
+    public void setImageByte(byte[] imageByte) {
+        this.imageByte = imageByte;
+        try {
+
+            //flujo de entrada de datos tipo byte[]
+            ByteArrayInputStream input = new ByteArrayInputStream(imageByte);
+
+            //crear buffer a partir del flujo de entrada
+            BufferedImage image = ImageIO.read(input);
+
+            //setear la imagen en la vista, escalandola al tamanio del label
+            this.lblImage.setIcon(new ImageIcon(image.getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_DEFAULT)));
+            this.imageAux = lblImage.getIcon();//salvar imagen auxiliar
+
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error al crear la imagen.\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     ////////////////////eventos//////////////
     private void seleccionarImagen() {//abre cuadro de dialogo para seleccionar imagen
 
-        fileChooser.showOpenDialog(this);//abrir dialogo
+        int estado = fileChooser.showOpenDialog(this);//abrir dialogo
 
-        try {
-            //flujo de salida de datos en bytes[]
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
+        if (fileChooser.getSelectedFile() != null && estado == JFileChooser.APPROVE_OPTION) {
 
-            //crear un buffer en memoria del archivo de imagen selecionado
-            BufferedImage img = ImageIO.read(fileChooser.getSelectedFile());
+            try {
 
-            //setear la imagen en la vista, escalandola al tamanio del label
-            lblImage.setIcon(new ImageIcon(img.getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_DEFAULT)));
-            System.out.println("\033[36m ================================================================================");
+                //crear un buffer en memoria del archivo de imagen selecionado
+                BufferedImage img = ImageIO.read(fileChooser.getSelectedFile());
 
-            System.out.println("\033[32m JGImageChoose: Vista previa generada.");
+                //setear la imagen en la vista, escalandola al tamanio del label
+                lblImage.setIcon(new ImageIcon(img.getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_DEFAULT)));
 
-            //guardarlo en los atributos
-            this.imagePath = fileChooser.getSelectedFile().getAbsolutePath();
-            System.out.println("\033[32m JGImageChoose: Ruta de la imagen seteada\n\t\t => \033[32m" + fileChooser.getSelectedFile().getAbsolutePath());
+                System.out.println("\033[36m ================================================================================");
 
-            this.imageIcon = new ImageIcon(img);
-            System.out.println("\033[32m JGImageChoose: objeto ImageIcon de la imagen seteado.");
+                System.out.println("\033[32m JGImageChoose: Vista previa generada.");
 
-            // escribir la imagen en el flujo de salida de datos
-            ImageIO.write(img, getExtension(fileChooser.getSelectedFile()), output);
+                //guardarlo en los atributos
+                this.imagePath = fileChooser.getSelectedFile().getAbsolutePath();
+                System.out.println("\033[32m JGImageChoose: Ruta de la imagen seteada\n\t\t => \033[32m" + fileChooser.getSelectedFile().getAbsolutePath());
 
-            this.imageByte = output.toByteArray();// obtener los bytes
-            System.out.println("\033[32m JGImageChoose: datos bytes de la imagen seteados.");
-            
-            System.out.println("\033[36m ================================================================================");
-            System.out.println("\033[32m TODO LISTO!.");
-            System.out.println("\033[36m ================================================================================");
+                this.imageIcon = new ImageIcon(img);
+                System.out.println("\033[32m JGImageChoose: objeto ImageIcon de la imagen seteado.");
 
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error al cargar la imagen.\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                //flujo de salida de datos en bytes[]
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+                // escribir la imagen en el flujo de salida de datos
+                ImageIO.write(img, getExtension(fileChooser.getSelectedFile()), output);
+
+                this.imageByte = output.toByteArray();// obtener los bytes
+
+                System.out.println("\033[32m JGImageChoose: datos bytes de la imagen seteados (extension = " + getExtension(fileChooser.getSelectedFile()) + ")");
+
+                System.out.println("\033[36m ================================================================================");
+                System.out.println("\033[32m TODO LISTO!.");
+                System.out.println("\033[36m ================================================================================");
+
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error al cargar la imagen.\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
     }
+
+    //eliminar la imagen y poner la que estaba por defecto
+    private void eliminarImagen() {
+
+        if (imageAux != null) {//si se asigno una pues se usa esa
+
+            this.lblImage.setIcon(imageAux);
+
+        } else {//sino pues se usa una predefinida
+
+            this.lblImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-multiplicar-100.png")));
+        }
+    }
+
+    //redimensiona la imagen de label cuando su tamanio camnbia
+//    private void redimencionarImagen() {
+//
+//        Image img = iconToImage(lblImage.getIcon());
+//
+//        //setear la imagen en la vista, escalandola al tamanio del label
+//        lblImage.setIcon(new ImageIcon(img.getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_DEFAULT)));
+//    }
 }

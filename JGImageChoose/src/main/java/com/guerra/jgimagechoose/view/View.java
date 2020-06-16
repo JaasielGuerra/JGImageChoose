@@ -30,6 +30,7 @@ public class View extends javax.swing.JPanel {
 
         pnlButton = new javax.swing.JPanel();
         btnSeleccionar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
         lblImage = new javax.swing.JLabel();
 
         setMinimumSize(new java.awt.Dimension(200, 200));
@@ -40,6 +41,9 @@ public class View extends javax.swing.JPanel {
         btnSeleccionar.setText("Seleccionar");
         pnlButton.add(btnSeleccionar);
 
+        btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-archivo-de-imagen-16.png"))); // NOI18N
+        pnlButton.add(btnEliminar);
+
         add(pnlButton, java.awt.BorderLayout.PAGE_END);
 
         lblImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -49,6 +53,7 @@ public class View extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JButton btnEliminar;
     protected javax.swing.JButton btnSeleccionar;
     protected javax.swing.JLabel lblImage;
     protected javax.swing.JPanel pnlButton;
