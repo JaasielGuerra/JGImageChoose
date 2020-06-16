@@ -1,0 +1,14 @@
+- obtener la ruta de la imagen (string)
+- obtener la imagen (imageIcon)
+- obtener la imagen pero en bytes (byte[])
+
+- debe tener la capacidad de setear una imagen por defecto o imagen escogida de la siguientes formas:
+
+	1 setearle la imagen dada su ruta (parametro string)
+	2 setearle la imagen dado el objeto (parametro imageIcon)
+	3 setearle la imagen dado los bytes (parametro byte[])
+
+- si contiene la imagen por defecto al momento de querer obtener la imagen, debe devolver null
+- La imagen debe redimencionarse al tamanio del componente
+- Cambiar el texto del boton
+- Cambiar el icono del boton
