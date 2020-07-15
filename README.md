@@ -63,7 +63,7 @@ Como primer paso deberá agregar el componente a su proyecto, vaya a las realese
 	<dependency>
 	    <groupId>com.github.JaasielGuerra</groupId>
 	    <artifactId>JGImageChoose</artifactId>
-	    <version>Tag</version>
+	    <version>1.0.0</version>
 	</dependency>
 ````
 
