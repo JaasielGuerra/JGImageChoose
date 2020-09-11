@@ -49,22 +49,22 @@ Como primer paso deberá agregar el componente a su proyecto, vaya a las realese
 1. Agregue el JitPack repositorio al `pom.xml`
 
 ````xml
-    <repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+   <repositories>
+      <repository>
+         <id>jitpack.io</id>
+	 <url>https://jitpack.io</url>
+      </repository>
+   </repositories>
 ````
 
 2. Agregue la dependencia
 
 ````xml
-	<dependency>
-	    <groupId>com.github.JaasielGuerra</groupId>
-	    <artifactId>JGImageChoose</artifactId>
-	    <version>1.0.0</version>
-	</dependency>
+   <dependency>
+      <groupId>com.github.JaasielGuerra</groupId>
+      <artifactId>JGImageChoose</artifactId>
+      <version>{Latest release}</version>
+   </dependency>
 ````
 
 ## 2. Agregando el componente a su UI
@@ -133,6 +133,18 @@ public class DemoImg extends JFrame {
 ## Métodos públicos
 
 ````java
+    /**
+     * Darle un tamanio al label de la imagen.
+     *
+     * <p>
+     * Por defecto el tamanio de la imagen sera 200 x 200.
+     * <p>
+     *
+     * @param width su ancho
+     * @param height su algo
+     */
+    public void setImagePreferredSize(int width, int height);
+
     /**
      * Devuelve la extension del archivo seleccionado.
      * <p>

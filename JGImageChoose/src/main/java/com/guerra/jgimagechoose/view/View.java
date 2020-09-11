@@ -48,6 +48,7 @@ public class View extends javax.swing.JPanel {
 
         lblImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-multiplicar-100.png"))); // NOI18N
+        lblImage.setPreferredSize(new java.awt.Dimension(200, 200));
         add(lblImage, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 

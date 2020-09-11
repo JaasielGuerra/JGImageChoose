@@ -4,6 +4,7 @@
 package com.guerra.jgimagechoose;
 
 import com.guerra.jgimagechoose.view.View;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -48,41 +49,14 @@ public class JGImageChoose extends View {
         this.fileChooser.setAcceptAllFileFilterUsed(false);// primero remover cualquier filtro
 
         // segundo asginar un filtro por nombre de extension de archivo
-        this.fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("*.png, *.jpg", "jpg", "png"));
+        this.fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("*.png, *.jpg, *.jpeg",
+                "jpg", "png", "jpeg", "JPG", "JPEG", "PNG"));
 
         //escucha de eventos al boton
         this.btnSeleccionar.addActionListener(event -> seleccionarImagen());
         this.btnEliminar.addActionListener(event -> eliminarImagen());
-
-        //evento jlabel
-//        this.lblImage.addComponentListener(new ComponentAdapter() {
-//
-//            @Override
-//            public void componentResized(ComponentEvent e) {
-//                redimencionarImagen();
-//            }
-//
-//        });
     }
 
-    //convertir icono a imagen
-//    private static Image iconToImage(Icon icon) {
-//        if (icon instanceof ImageIcon) {
-//            return ((ImageIcon) icon).getImage();
-//        } else {
-//            int w = icon.getIconWidth();
-//            int h = icon.getIconHeight();
-//            GraphicsEnvironment ge
-//                    = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//            GraphicsDevice gd = ge.getDefaultScreenDevice();
-//            GraphicsConfiguration gc = gd.getDefaultConfiguration();
-//            BufferedImage image = gc.createCompatibleImage(w, h);
-//            Graphics2D g = image.createGraphics();
-//            icon.paintIcon(null, g, 0, 0);
-//            g.dispose();
-//            return image;
-//        }
-//    }
     //obtener la extension del archivo
     private String getExtension(File file) {
 
@@ -98,6 +72,20 @@ public class JGImageChoose extends View {
     }
 
     /////////////metodos getter y setter//////////////////
+    /**
+     * Darle un tamanio al label de la imagen.
+     *
+     * <p>
+     * Por defecto el tamanio de la imagen sera 200 x 200.
+     * <p>
+     *
+     * @param width su ancho
+     * @param height su algo
+     */
+    public void setImagePreferredSize(int width, int height) {
+        this.lblImage.setPreferredSize(new Dimension(width, height));
+    }
+
     /**
      * Devuelve la extension del archivo seleccionado.
      * <p>
@@ -183,7 +171,8 @@ public class JGImageChoose extends View {
             BufferedImage img = ImageIO.read(new File(imagePath));
 
             //setear la imagen en la vista, escalandola al tamanio del label
-            this.lblImage.setIcon(new ImageIcon(img.getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_DEFAULT)));
+            this.lblImage.setIcon(new ImageIcon(img.getScaledInstance(lblImage.getPreferredSize().width,
+                    lblImage.getPreferredSize().height, Image.SCALE_DEFAULT)));
             this.imageAux = lblImage.getIcon();//salvar imagen auxiliar
 
         } catch (IOException ex) {
@@ -215,7 +204,8 @@ public class JGImageChoose extends View {
     public void setImageIcon(ImageIcon imageIcon) {
         this.imageIcon = imageIcon;
 
-        this.lblImage.setIcon(imageIcon);
+        this.lblImage.setIcon(new ImageIcon(imageIcon.getImage().getScaledInstance(lblImage.getPreferredSize().width,
+                lblImage.getPreferredSize().height, Image.SCALE_DEFAULT)));
         this.imageAux = lblImage.getIcon();//salvar imagen auxiliar
     }
 
@@ -252,7 +242,8 @@ public class JGImageChoose extends View {
             BufferedImage image = ImageIO.read(input);
 
             //setear la imagen en la vista, escalandola al tamanio del label
-            this.lblImage.setIcon(new ImageIcon(image.getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_DEFAULT)));
+            this.lblImage.setIcon(new ImageIcon(image.getScaledInstance(lblImage.getPreferredSize().width,
+                    lblImage.getPreferredSize().height, Image.SCALE_DEFAULT)));
             this.imageAux = lblImage.getIcon();//salvar imagen auxiliar
 
         } catch (IOException ex) {
@@ -273,7 +264,8 @@ public class JGImageChoose extends View {
                 BufferedImage img = ImageIO.read(fileChooser.getSelectedFile());
 
                 //setear la imagen en la vista, escalandola al tamanio del label
-                lblImage.setIcon(new ImageIcon(img.getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_DEFAULT)));
+                lblImage.setIcon(new ImageIcon(img.getScaledInstance(lblImage.getPreferredSize().width,
+                        lblImage.getPreferredSize().height, Image.SCALE_DEFAULT)));
 
                 System.out.println("\033[36m ================================================================================");
 
@@ -320,12 +312,4 @@ public class JGImageChoose extends View {
         }
     }
 
-    //redimensiona la imagen de label cuando su tamanio camnbia
-//    private void redimencionarImagen() {
-//
-//        Image img = iconToImage(lblImage.getIcon());
-//
-//        //setear la imagen en la vista, escalandola al tamanio del label
-//        lblImage.setIcon(new ImageIcon(img.getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_DEFAULT)));
-//    }
 }
